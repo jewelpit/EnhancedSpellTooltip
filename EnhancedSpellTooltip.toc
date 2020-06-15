@@ -1,0 +1,7 @@
+## Interface: 11304
+## Title: Enhanced Spell Tooltip
+## Notes: Puts additional information in spell tooltips.
+## Author: jewelpit
+## Version: 1.0
+
+Main.lua
