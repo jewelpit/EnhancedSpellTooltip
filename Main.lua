@@ -1,22 +1,24 @@
-print("testing message")
+local function update_mana(percent, ...)
+    for i = 1, select("#", ...) do
+        local region = select(i, ...)
+        if region and region:GetObjectType() == "FontString" then
+            local left = region:GetText()
+            if left and string.find(left, "^%d+ Mana$") then
+                region:SetText(string.format("%s (%.2f%%)", left, percent))
+            end
+        end
+    end
+end
 
 GameTooltip:HookScript("OnTooltipSetSpell", function(self)
     local spell_name, spell_id = GameTooltip:GetSpell()
-    print(GetSpellInfo(spell_id))
     local total_mana_cost = 0
     for _, v in ipairs(GetSpellPowerCost(spell_id)) do
         if v.name == "MANA" then
             total_mana_cost = total_mana_cost + v.cost
         end
     end
-    print(GetSpellBonusDamage(4))
-    print(GetSpellBonusHealing())
-    local name, _, _, castTime, _, _ = GetSpellInfo(spell_id)
-    GameTooltip:AddLine("|cffffffff")
-    GameTooltip:AddLine(spell_name, 1, 1, 1)
-    GameTooltip:AddLine("Spell ID: " .. spell_id, 1, 1, 1)
 
-    -- This is the actual cast time, including talents and haste.
-    GameTooltip:AddLine("Cast time: " .. (castTime / 1000.0) .. " sec", 1, 1, 1)
-    GameTooltip:AddLine("Mana cost: " .. total_mana_cost, 1, 1, 1)
+    local total_mana_percent = total_mana_cost / UnitPowerMax("player") * 100
+    update_mana(total_mana_percent, GameTooltip:GetRegions())
 end)
